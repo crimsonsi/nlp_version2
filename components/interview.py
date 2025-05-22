@@ -225,8 +225,22 @@ def show_interview():
 
     # Q&A Section after completing 5 questions
     if st.session_state['show_qa']:
-        st.markdown("### Ask Your Questions")
-        st.write("You can ask up to 3 questions about data science topics.")
+        st.markdown("""
+            <div style='
+                background: white;
+                padding: 2rem;
+                border-radius: 1rem;
+                border: 2px solid var(--brand-primary);
+                margin: 2rem 0;
+            '>
+                <h2 style='color: var(--brand-primary); margin-bottom: 1rem;'>
+                    🤖 Ask the AI Assistant
+                </h2>
+                <p style='color: var(--neutral-600); margin-bottom: 1rem;'>
+                    You can ask up to 3 questions about data science topics. The AI will provide detailed answers to help you learn.
+                </p>
+            </div>
+        """, unsafe_allow_html=True)
         
         if len(st.session_state['user_questions']) < 3:
             user_question = st.text_input("Your Question")
