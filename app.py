@@ -14,8 +14,23 @@ st.set_page_config(
     page_title="Data Science Interview Simulator",
     layout="wide",
     initial_sidebar_state="collapsed",
-    page_icon="🎯"
+    page_icon="🎯",
+    menu_items={
+        'About': "Data Science Interview Simulator - Practice and improve your interview skills"
+    }
 )
+
+# Hide Streamlit's default menu and footer
+hide_streamlit_style = """
+<style>
+#MainMenu {visibility: hidden;}
+footer {visibility: hidden;}
+.stApp {
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+}
+</style>
+"""
+st.markdown(hide_streamlit_style, unsafe_allow_html=True)
 
 # Custom CSS for enhanced UI
 st.markdown("""
