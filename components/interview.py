@@ -224,13 +224,14 @@ def show_interview():
                     st.rerun()
 
     # Q&A Section after completing 5 questions
-    if st.session_state['show_qa']:
+    # Q&A Section automatically appears after 5 questions
+    if st.session_state['interview_completed']:
         st.markdown("""
             <div style='
-                background: white;
-                padding: 2rem;
+                background: linear-gradient(to right, #f8f9fa, #ffffff);
+                padding: 2.5rem;
                 border-radius: 1rem;
-                border: 2px solid var(--brand-primary);
+                box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
                 margin: 2rem 0;
             '>
                 <h2 style='color: var(--brand-primary); margin-bottom: 1rem;'>

@@ -26,7 +26,7 @@ st.markdown("""
         --brand-primary: #2563EB;
         --brand-secondary: #3B82F6;
         --brand-accent: #60A5FA;
-        
+
         /* Neutral Colors */
         --neutral-50: #F8FAFC;
         --neutral-100: #F1F5F9;
@@ -38,21 +38,21 @@ st.markdown("""
         --neutral-700: #334155;
         --neutral-800: #1E293B;
         --neutral-900: #0F172A;
-        
+
         /* Semantic Colors */
         --success: #10B981;
         --warning: #F59E0B;
         --error: #EF4444;
         --info: #3B82F6;
     }
-    
+
     /* Global Styles */
     .stApp {
         background-color: var(--neutral-50);
         color: var(--neutral-900);
         font-family: system-ui, -apple-system, sans-serif;
     }
-    
+
     /* Typography */
     h1, h2, h3, h4, h5, h6 {
         font-weight: 700;
@@ -60,7 +60,7 @@ st.markdown("""
         margin-bottom: 1rem;
         color: var(--neutral-900);
     }
-    
+
     /* Card Styles */
     .card {
         background: white;
@@ -70,12 +70,12 @@ st.markdown("""
         transition: all 0.3s ease;
         border: 1px solid var(--neutral-200);
     }
-    
+
     .card:hover {
         transform: translateY(-2px);
         box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1);
     }
-    
+
     /* Button Styles */
     .stButton > button {
         background: var(--brand-primary);
@@ -86,12 +86,12 @@ st.markdown("""
         font-weight: 600;
         transition: all 0.2s ease;
     }
-    
+
     .stButton > button:hover {
         background: var(--brand-secondary);
         transform: translateY(-1px);
     }
-    
+
     /* Input Styles */
     .stTextInput > div > div > input,
     .stTextArea > div > div > textarea {
@@ -100,13 +100,13 @@ st.markdown("""
         padding: 0.75rem;
         transition: all 0.2s ease;
     }
-    
+
     .stTextInput > div > div > input:focus,
     .stTextArea > div > div > textarea:focus {
         border-color: var(--brand-primary);
         box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
     }
-    
+
     /* Error Message Styles */
     .stAlert {
         background-color: #FEE2E2 !important;
@@ -186,7 +186,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
-
-
-    

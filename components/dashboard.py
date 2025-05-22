@@ -5,6 +5,33 @@ from components.auth import show_auth_buttons
 from utils.interview_utils import get_random_question
 import time
 
+from components.history import show_history
+
+def show_dashboard():
+    """Show the main dashboard"""
+    st.markdown("""
+        <div style='text-align: center; padding: 1rem;'>
+            <h1 style='color: var(--brand-primary);'>Interview Simulator</h1>
+        </div>
+    """, unsafe_allow_html=True)
+    
+    tab1, tab2 = st.tabs(["🎯 Start Interview", "📚 History"])
+    
+    with tab1:
+        categories = ["All", "Machine Learning", "Data Analysis", "Statistics", "Python", "SQL"]
+        st.session_state['selected_category'] = st.selectbox(
+            "Choose Interview Category",
+            categories,
+            index=0
+        )
+        
+        if st.button("Start Interview", use_container_width=True):
+            st.session_state['page'] = 'interview'
+            st.rerun()
+            
+    with tab2:
+        show_history()
+
 def load_data():
     """Load interview questions data"""
     try:
