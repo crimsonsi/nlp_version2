@@ -7,20 +7,20 @@ def init_auth_session():
         st.session_state['is_authenticated'] = False
     if 'user_id' not in st.session_state:
         st.session_state['user_id'] = None
-    if 'username' not in st.session_state:
-        st.session_state['username'] = None
+    if 'name' not in st.session_state:
+        st.session_state['name'] = None
     if 'show_login' not in st.session_state:
         st.session_state['show_login'] = False
     if 'show_register' not in st.session_state:
         st.session_state['show_register'] = False
 
-def login(username, password):
+def login(email, password):
     """Handle user login"""
-    user = verify_user(username, password)
+    user = verify_user(email, password)
     if user:
         st.session_state['is_authenticated'] = True
         st.session_state['user_id'] = user['id']
-        st.session_state['username'] = user['username']
+        st.session_state['name'] = user['name']
         return True
     return False
 
@@ -28,7 +28,7 @@ def logout():
     """Handle user logout"""
     st.session_state['is_authenticated'] = False
     st.session_state['user_id'] = None
-    st.session_state['username'] = None
+    st.session_state['name'] = None
     st.session_state['show_login'] = False
     st.session_state['show_register'] = False
 
@@ -44,4 +44,4 @@ def require_auth():
     if not st.session_state['is_authenticated']:
         st.session_state['show_login'] = True
         return False
-    return True 
+    return True

@@ -57,7 +57,7 @@ def test_connection():
                 # Test inserting a test user
                 try:
                     cur.execute("""
-                        INSERT INTO users (username, email, password_hash)
+                        INSERT INTO users (name, email, password_hash)
                         VALUES (%s, %s, %s)
                         RETURNING id;
                     """, ('test_user', 'test@example.com', 'test_hash'))
