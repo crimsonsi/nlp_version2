@@ -1,158 +1,134 @@
-
 import streamlit as st
 from db_utils import get_interview_responses
 
 def show_results():
-    """Show interview results with modern UI"""
     st.markdown("""
-        <div style='text-align: center; padding: 2rem; animation: fadeIn 0.5s ease-out;'>
-            <h1 style='color: var(--brand-primary); font-size: 2.5rem; margin-bottom: 1rem;'>
-                🎯 Interview Results
-            </h1>
-            <p style='color: var(--neutral-600); font-size: 1.2rem;'>
-                Here's how you performed in your interview
-            </p>
+        <div style='
+            background: linear-gradient(135deg, var(--brand-primary) 0%, var(--brand-secondary) 100%);
+            padding: 2rem;
+            border-radius: 1rem;
+            margin-bottom: 2rem;
+            color: white;
+            text-align: center;
+        '>
+            <h1 style='font-size: 2.5rem; margin-bottom: 1rem;'>🎉 Interview Complete!</h1>
+            <p style='font-size: 1.2rem; opacity: 0.9;'>Here's how you performed</p>
         </div>
     """, unsafe_allow_html=True)
-    
-    if 'interview_id' in st.session_state and st.session_state['interview_id']:
-        responses = get_interview_responses(st.session_state['interview_id'])
-        
-        if responses:
-            # Calculate metrics
-            total_score = sum(response['score'] for response in responses)
-            avg_score = total_score / len(responses)
-            total_time = sum(response['time_taken'] for response in responses)
-            
-            # Display performance metrics
-            col1, col2, col3 = st.columns(3)
-            
-            with col1:
+
+    # Calculate overall score
+    if st.session_state.get('evaluations'):
+        total_score = 0
+        for evaluation in st.session_state['evaluations']:
+            try:
+                score_line = evaluation.split('\n')[0]
+                score = float(score_line.split(':')[1].split('/')[0].strip())
+                total_score += score
+            except:
+                continue
+
+        avg_score = total_score / len(st.session_state['evaluations'])
+
+        # Display score card
+        st.markdown(f"""
+            <div style='
+                background: white;
+                border-radius: 1rem;
+                padding: 2rem;
+                text-align: center;
+                margin-bottom: 2rem;
+                box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            '>
+                <h2 style='color: var(--brand-primary); font-size: 3rem; margin-bottom: 0.5rem;'>{avg_score:.1f}/10</h2>
+                <p style='color: var(--neutral-600); font-size: 1.2rem;'>Overall Score</p>
+            </div>
+        """, unsafe_allow_html=True)
+
+        # Display detailed breakdown
+        st.markdown("""
+            <h3 style='color: var(--brand-primary); margin-bottom: 1.5rem;'>
+                📊 Detailed Performance Breakdown
+            </h3>
+        """, unsafe_allow_html=True)
+
+        for i, (question, answer, evaluation) in enumerate(zip(
+            st.session_state['current_question'] if isinstance(st.session_state['current_question'], list) else [st.session_state['current_question']],
+            st.session_state['user_answers'],
+            st.session_state['evaluations']
+        )):
+            with st.expander(f"Question {i+1} Details"):
                 st.markdown(f"""
                     <div style='
-                        background: white;
-                        padding: 2rem;
-                        border-radius: 1rem;
-                        text-align: center;
-                        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-                    '>
-                        <h3 style='color: var(--brand-primary); margin-bottom: 0.5rem;'>
-                            Overall Score
-                        </h3>
-                        <div style='font-size: 2.5rem; font-weight: bold; color: var(--brand-primary);'>
-                            {avg_score:.1f}/10
-                        </div>
-                    </div>
-                """, unsafe_allow_html=True)
-            
-            with col2:
-                st.markdown(f"""
-                    <div style='
-                        background: white;
-                        padding: 2rem;
-                        border-radius: 1rem;
-                        text-align: center;
-                        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-                    '>
-                        <h3 style='color: var(--brand-primary); margin-bottom: 0.5rem;'>
-                            Questions Answered
-                        </h3>
-                        <div style='font-size: 2.5rem; font-weight: bold; color: var(--brand-primary);'>
-                            {len(responses)}
-                        </div>
-                    </div>
-                """, unsafe_allow_html=True)
-            
-            with col3:
-                st.markdown(f"""
-                    <div style='
-                        background: white;
-                        padding: 2rem;
-                        border-radius: 1rem;
-                        text-align: center;
-                        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-                    '>
-                        <h3 style='color: var(--brand-primary); margin-bottom: 0.5rem;'>
-                            Total Time
-                        </h3>
-                        <div style='font-size: 2.5rem; font-weight: bold; color: var(--brand-primary);'>
-                            {total_time//60}:{total_time%60:02d}
-                        </div>
-                    </div>
-                """, unsafe_allow_html=True)
-            
-            st.markdown("<br>", unsafe_allow_html=True)
-            
-            # Display detailed breakdown
-            st.markdown("""
-                <h2 style='color: var(--neutral-800); margin: 2rem 0 1rem 0;'>
-                    Question Breakdown
-                </h2>
-            """, unsafe_allow_html=True)
-            
-            for i, response in enumerate(responses, 1):
-                score_color = '#10B981' if response['score'] >= 7 else '#F59E0B' if response['score'] >= 5 else '#EF4444'
-                st.markdown(f"""
-                    <div style='
-                        background: white;
-                        border-radius: 1rem;
+                        background: var(--neutral-50);
+                        border-radius: 0.75rem;
                         padding: 1.5rem;
                         margin-bottom: 1rem;
-                        box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-                        border-left: 4px solid {score_color};
                     '>
-                        <div style='display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;'>
-                            <h3 style='color: var(--brand-primary); margin: 0;'>Question {i}</h3>
-                            <div style='
-                                background: {score_color};
-                                color: white;
-                                padding: 0.5rem 1rem;
-                                border-radius: 2rem;
-                                font-weight: 600;
-                            '>
-                                Score: {response['score']}/10
-                            </div>
-                        </div>
-                        <div style='color: var(--neutral-800); font-size: 1.1rem; margin-bottom: 1rem;'>
-                            {response['question']}
-                        </div>
+                        <h4 style='color: var(--brand-primary); margin-bottom: 1rem;'>Question</h4>
+                        <p style='color: var(--neutral-800); font-size: 1.1rem;'>{question}</p>
+
+                        <h4 style='color: var(--brand-primary); margin: 1rem 0;'>Your Answer</h4>
                         <div style='
-                            background: var(--neutral-50);
+                            background: white;
                             padding: 1rem;
                             border-radius: 0.5rem;
-                            margin-bottom: 0.5rem;
+                            border: 1px solid var(--neutral-200);
                         '>
-                            <div style='color: var(--neutral-600); font-weight: 500; margin-bottom: 0.5rem;'>
-                                Your Answer:
-                            </div>
-                            <div style='color: var(--neutral-800);'>
-                                {response['user_answer']}
-                            </div>
+                            <p style='color: var(--neutral-800);'>{answer}</p>
                         </div>
-                        <div style='color: var(--neutral-600); font-size: 0.9rem; text-align: right;'>
-                            Time taken: {response['time_taken']} seconds
+
+                        <h4 style='color: var(--brand-primary); margin: 1rem 0;'>Evaluation</h4>
+                        <div style='
+                            background: white;
+                            padding: 1rem;
+                            border-radius: 0.5rem;
+                            border: 1px solid var(--neutral-200);
+                        '>
+                            <p style='color: var(--neutral-800); white-space: pre-line;'>{evaluation}</p>
                         </div>
                     </div>
                 """, unsafe_allow_html=True)
-            
-            # Navigation buttons
-            col1, col2 = st.columns(2)
-            with col1:
-                if st.button("🏠 Back to Dashboard", use_container_width=True):
-                    st.session_state['interview_started'] = False
-                    st.session_state['interview_completed'] = False
-                    st.rerun()
-            with col2:
-                if st.button("🎯 Start New Interview", use_container_width=True):
-                    st.session_state['interview_started'] = False
-                    st.session_state['interview_completed'] = False
-                    st.session_state['current_question'] = None
-                    st.session_state['current_answer'] = None
-                    st.session_state['user_answers'] = []
-                    st.session_state['evaluations'] = []
-                    st.session_state['question_count'] = 0
-                    st.rerun()
-        else:
-            st.error("No interview results found. Please complete an interview first.")
+
+        # Display Q&A section
+        if st.session_state.get('user_questions'):
+            st.markdown("""
+                <h3 style='color: var(--brand-primary); margin: 2rem 0 1.5rem;'>
+                    💡 Your Q&A Session
+                </h3>
+            """, unsafe_allow_html=True)
+
+            for i, (question, response) in enumerate(zip(
+                st.session_state['user_questions'],
+                st.session_state['ai_responses']
+            )):
+                with st.expander(f"Q&A {i+1}"):
+                    st.markdown(f"""
+                        <div style='
+                            background: var(--neutral-50);
+                            border-radius: 0.75rem;
+                            padding: 1.5rem;
+                            margin-bottom: 1rem;
+                        '>
+                            <h4 style='color: var(--brand-primary); margin-bottom: 0.5rem;'>Your Question</h4>
+                            <p style='color: var(--neutral-800); font-size: 1.1rem;'>{question}</p>
+
+                            <h4 style='color: var(--brand-primary); margin: 1rem 0 0.5rem;'>AI Response</h4>
+                            <p style='color: var(--neutral-800);'>{response}</p>
+                        </div>
+                    """, unsafe_allow_html=True)
+
+        # Action buttons
+        col1, col2 = st.columns(2)
+        with col1:
+            if st.button("📝 Start New Interview", use_container_width=True):
+                st.session_state['interview_started'] = False
+                st.session_state['interview_completed'] = False
+                st.session_state['show_results'] = False
+                st.rerun()
+
+        with col2:
+            if st.button("📊 View History", use_container_width=True):
+                st.session_state['page'] = 'history'
+                st.rerun()
     else:
         st.error("No interview results found. Please complete an interview first.")
