@@ -1,3 +1,4 @@
+
 import streamlit as st
 from db_utils import register_user, verify_user
 
@@ -21,8 +22,8 @@ def login(email, password):
         st.session_state['is_authenticated'] = True
         st.session_state['user_id'] = user['id']
         st.session_state['name'] = user['name']
-        return True
-    return False
+        return True, user['id']
+    return False, "Invalid email or password"
 
 def logout():
     """Handle user logout"""
@@ -36,8 +37,8 @@ def register(username, email, password):
     """Handle user registration"""
     user_id = register_user(username, email, password)
     if user_id:
-        return True
-    return False
+        return True, "Registration successful"
+    return False, "Registration failed"
 
 def require_auth():
     """Check if user is authenticated, if not show login"""
