@@ -10,7 +10,23 @@ from openai import OpenAI
 from dotenv import load_dotenv
 
 load_dotenv()
-client = OpenAI(api_key=os.getenv('KEY'))
+api_key = os.getenv('KEY')
+if not api_key or api_key == 'your_KEY_here':
+    print("Warning: Invalid OpenAI API key")
+    client = None
+else:
+    client = OpenAI(api_key=api_key)
+
+def rephrase_with_fallback(question):
+    """Attempt to rephrase, fall back to original if API unavailable"""
+    if not client:
+        print("OpenAI client not initialized - using original question")
+        return question
+    try:
+        return rephrase_question(question)
+    except Exception as e:
+        print(f"Rephrasing failed: {e}")
+        return question
 
 def load_questions():
     """Load interview questions from CSV file"""
@@ -71,7 +87,7 @@ def get_random_question(category="All"):
             return None, None
             
         question = df.sample(n=1).iloc[0]
-        rephrased_question = rephrase_question(question['Question'])
+        rephrased_question = rephrase_with_fallback(question['Question'])
         return rephrased_question, question['Answer']
     except Exception as e:
         print(f"Error getting random question: {str(e)}")
