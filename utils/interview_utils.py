@@ -32,8 +32,27 @@ def load_questions():
         st.error(f"Error loading questions: {str(e)}")
         return None
 
+def rephrase_question(question):
+    """Rephrase a technical question into a conversational interview style"""
+    try:
+        prompt = f"""Convert this technical question into a natural, conversational interview style while maintaining its professional tone:
+Original: {question}
+Make it sound like a senior data scientist asking a candidate during an interview."""
+        
+        response = client.chat.completions.create(
+            model="gpt-3.5-turbo",
+            messages=[{"role": "system", "content": "You are an experienced data science interviewer."},
+                     {"role": "user", "content": prompt}],
+            temperature=0.7,
+            max_tokens=150
+        )
+        return response.choices[0].message.content.strip()
+    except Exception as e:
+        print(f"Error rephrasing question: {str(e)}")
+        return question
+
 def get_random_question(category="All"):
-    """Get a random question from the dataset"""
+    """Get a random question from the dataset and rephrase it"""
     try:
         current_dir = Path(__file__).parent.parent
         data_path = current_dir / 'interview_qa_combined.csv'
@@ -52,7 +71,8 @@ def get_random_question(category="All"):
             return None, None
             
         question = df.sample(n=1).iloc[0]
-        return question['Question'], question['Answer']
+        rephrased_question = rephrase_question(question['Question'])
+        return rephrased_question, question['Answer']
     except Exception as e:
         print(f"Error getting random question: {str(e)}")
         return None, None
