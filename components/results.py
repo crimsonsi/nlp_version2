@@ -1,5 +1,6 @@
 import streamlit as st
 from db_utils import get_interview_responses
+from utils.interview_utils import get_ai_response
 
 def show_results():
     st.markdown("""
