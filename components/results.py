@@ -117,6 +117,69 @@ def show_results():
                         </div>
                     """, unsafe_allow_html=True)
 
+        # Q&A Section
+        st.markdown("""
+            <div style='
+                background: white;
+                border-radius: 1rem;
+                padding: 2rem;
+                margin: 2rem 0;
+                box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+                border: 1px solid var(--neutral-200);
+            '>
+                <h3 style='color: var(--brand-primary); margin-bottom: 1rem;'>
+                    🤖 Ask the AI Assistant
+                </h3>
+                <p style='color: var(--neutral-600); margin-bottom: 1rem;'>
+                    You can ask up to 3 questions about any data science topic
+                </p>
+            </div>
+        """, unsafe_allow_html=True)
+
+        # Show remaining questions counter
+        questions_asked = len(st.session_state.get('user_questions', []))
+        questions_remaining = 3 - questions_asked
+        
+        if questions_remaining > 0:
+            st.markdown(f"""
+                <div style='
+                    background: var(--neutral-50);
+                    padding: 0.75rem;
+                    border-radius: 0.5rem;
+                    text-align: center;
+                    margin-bottom: 1rem;
+                '>
+                    <p style='color: var(--neutral-600); margin: 0;'>
+                        ⭐️ {questions_remaining} questions remaining
+                    </p>
+                </div>
+            """, unsafe_allow_html=True)
+            
+            question = st.text_area(
+                "Your Question",
+                height=100,
+                placeholder="Ask anything about data science, algorithms, or interview preparation...",
+                key="qa_input"
+            )
+            
+            if st.button("🚀 Ask Question", type="primary", use_container_width=True):
+                if question:
+                    with st.spinner("Getting AI response..."):
+                        ai_response = get_ai_response(question)
+                        if 'user_questions' not in st.session_state:
+                            st.session_state['user_questions'] = []
+                        if 'ai_responses' not in st.session_state:
+                            st.session_state['ai_responses'] = []
+                        st.session_state['user_questions'].append(question)
+                        st.session_state['ai_responses'].append(ai_response)
+                        st.rerun()
+                else:
+                    st.error("Please enter a question first!")
+        else:
+            st.info("You've used all your questions! Check out the responses below.")
+
+        st.divider()
+
         # Action buttons
         col1, col2 = st.columns(2)
         with col1:
