@@ -109,8 +109,9 @@ def show_results():
                             border-radius: 0.75rem;
                             padding: 1.5rem;
                             margin-bottom: 1rem;
+                            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
                         '>
-                            <h4 style='color: var(--brand-primary); margin-bottom: 0.5rem;'>Your Question</h4>
+                            <h4 style='color: var(--brand-primary); margin-bottom: 1rem;'>Question {i+1}</h4>
                             <p style='color: var(--neutral-800); font-size: 1.1rem;'>{question}</p>
 
                             <h4 style='color: var(--brand-primary); margin: 1rem 0 0.5rem;'>AI Response</h4>
@@ -140,7 +141,7 @@ def show_results():
         # Show remaining questions counter
         questions_asked = len(st.session_state.get('user_questions', []))
         questions_remaining = 3 - questions_asked
-        
+
         if questions_remaining > 0:
             st.markdown(f"""
                 <div style='
@@ -155,14 +156,14 @@ def show_results():
                     </p>
                 </div>
             """, unsafe_allow_html=True)
-            
+
             question = st.text_area(
                 "Your Question",
                 height=100,
                 placeholder="Ask anything about data science, algorithms, or interview preparation...",
                 key="qa_input"
             )
-            
+
             if st.button("🚀 Ask Question", type="primary", use_container_width=True):
                 if question:
                     with st.spinner("Getting AI response..."):
