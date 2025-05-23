@@ -76,7 +76,13 @@ Provide:
 1. 2-3 key strengths
 2. 2-3 areas for improvement"""
 
-        feedback = ai.generate(prompt=prompt, temperature=0.7, max_tokens=300)
+        response = client.chat.completions.create(
+            model="gpt-3.5-turbo",
+            messages=[{"role": "user", "content": prompt}],
+            temperature=0.7,
+            max_tokens=300
+        )
+        feedback = response.choices[0].message.content.strip()
 
         return f"Score: {score}/10\n\n{feedback}\n\nIdeal Response:\n{ideal_answer}"
     except Exception as e:
@@ -87,8 +93,13 @@ def get_ai_response(question):
     """Get AI response for user's question using Replit AI"""
     try:
         prompt = f"""As an expert data scientist, provide a detailed answer to this interview question: {question}"""
-        response = ai.generate(prompt=prompt, temperature=0.7, max_tokens=500)
-        return response
+        response = client.chat.completions.create(
+            model="gpt-3.5-turbo",
+            messages=[{"role": "user", "content": prompt}],
+            temperature=0.7,
+            max_tokens=500
+        )
+        return response.choices[0].message.content.strip()
     except Exception as e:
         print(f"Error getting AI response: {str(e)}")
         return "Error getting response. Please try again."
