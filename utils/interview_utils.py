@@ -55,7 +55,7 @@ def get_random_question(category="All"):
         return None, None
 
 def evaluate_answer(question, user_answer, ideal_answer):
-    """Evaluate user's answer using local model comparison and Replit AI"""
+    """Evaluate user's answer using TF-IDF and cosine similarity"""
     try:
         # Calculate similarity between user answer and ideal answer
         vectorizer = TfidfVectorizer()
@@ -64,25 +64,20 @@ def evaluate_answer(question, user_answer, ideal_answer):
 
         # Convert similarity to score (0-10) and round to integer
         score = int(round(similarity * 10))
-
-        # Use Replit AI to generate feedback
-        prompt = f"""As an expert interviewer, evaluate this answer to a data science question:
-Question: {question}
-User's Answer: {user_answer}
-Ideal Answer: {ideal_answer}
-Score: {score}/10
-
-Provide:
-1. 2-3 key strengths
-2. 2-3 areas for improvement"""
-
-        response = client.chat.completions.create(
-            model="gpt-3.5-turbo",
-            messages=[{"role": "user", "content": prompt}],
-            temperature=0.7,
-            max_tokens=300
-        )
-        feedback = response.choices[0].message.content.strip()
+        
+        # Extract key points from answers using simple text analysis
+        user_keywords = set(word.lower() for word in user_answer.split())
+        ideal_keywords = set(word.lower() for word in ideal_answer.split())
+        
+        # Find matching and missing keywords
+        matches = user_keywords.intersection(ideal_keywords)
+        missing = ideal_keywords - user_keywords
+        
+        # Generate feedback
+        feedback = "Key Points Covered:\n"
+        feedback += "\n".join(f"✓ '{word}'" for word in list(matches)[:3])
+        feedback += "\n\nMissing Key Points:\n"
+        feedback += "\n".join(f"• '{word}'" for word in list(missing)[:3])
 
         return f"Score: {score}/10\n\n{feedback}\n\nIdeal Response:\n{ideal_answer}"
     except Exception as e:
