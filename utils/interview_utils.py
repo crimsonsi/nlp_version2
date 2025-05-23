@@ -5,7 +5,9 @@ import random
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
 import numpy as np
-from replit import ai
+from openai import OpenAI
+
+client = OpenAI(api_key=os.getenv('KEY'))
 
 def rephrase_question(question):
     """Rephrase a technical question into a conversational interview style"""
@@ -14,8 +16,13 @@ def rephrase_question(question):
 Original: {question}
 Make it sound like a senior data scientist asking a candidate during an interview."""
 
-        response = ai.generate(prompt=prompt, temperature=0.7, max_tokens=150)
-        return response.strip()
+        response = client.chat.completions.create(
+            model="gpt-3.5-turbo",
+            messages=[{"role": "user", "content": prompt}],
+            temperature=0.7,
+            max_tokens=150
+        )
+        return response.choices[0].message.content.strip()
     except Exception as e:
         print(f"Error rephrasing question: {str(e)}")
         return question
