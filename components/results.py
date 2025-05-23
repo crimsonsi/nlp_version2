@@ -174,6 +174,22 @@ def show_results():
                             st.session_state['ai_responses'] = []
                         st.session_state['user_questions'].append(question)
                         st.session_state['ai_responses'].append(ai_response)
+                        
+                        # Display the current response immediately
+                        st.markdown("""
+                            <div style='
+                                background: var(--neutral-50);
+                                border-radius: 0.75rem;
+                                padding: 1.5rem;
+                                margin: 1rem 0;
+                                box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+                            '>
+                                <h4 style='color: var(--brand-primary); margin-bottom: 1rem;'>Your Question</h4>
+                                <p style='color: var(--neutral-800);'>{}</p>
+                                <h4 style='color: var(--brand-primary); margin: 1rem 0;'>AI Response</h4>
+                                <p style='color: var(--neutral-800);'>{}</p>
+                            </div>
+                        """.format(question, ai_response), unsafe_allow_html=True)
                         st.rerun()
                 else:
                     st.error("Please enter a question first!")
